@@ -1,11 +1,49 @@
-// كلمات السر الخاصة
-const passwords = {
-    "adam": "ملك",
-    "mahmoud": "مريم",
-    "mariam": "مريم"
+// تهيئة العناصر والمتغيرات
+const elements = {
+    // الشاشات
+    passwordScreen: document.getElementById('passwordScreen'),
+    contentScreen: document.getElementById('contentScreen'),
+    pageLoader: document.getElementById('pageLoader'),
+    
+    // عناصر الإدخال
+    passwordInput: document.getElementById('passwordInput'),
+    submitPassword: document.getElementById('submitPassword'),
+    clearInput: document.getElementById('clearInput'),
+    
+    // عناصر المحتوى
+    contentContainer: document.getElementById('contentContainer'),
+    backButton: document.getElementById('backButton'),
+    secretMessage: document.getElementById('secretMessage'),
+    
+    // عناصر العد التنازلي
+    days: document.getElementById('days'),
+    hours: document.getElementById('hours'),
+    minutes: document.getElementById('minutes'),
+    seconds: document.getElementById('seconds'),
+    
+    // عناصر التقدم
+    progressBar: document.getElementById('progressBar'),
+    lovePercent: document.getElementById('lovePercent'),
+    
+    // الصوتيات
+    backgroundMusic: document.getElementById('backgroundMusic'),
+    clickSound: document.getElementById('clickSound'),
+    successSound: document.getElementById('successSound'),
+    
+    // العناصر المتحركة
+    floatingElements: document.querySelectorAll('.float-element'),
+    bgParticles: document.querySelector('.bg-animated-particles'),
+    entrySparks: document.querySelectorAll('.entry-spark'),
+    containerGlow: document.querySelector('.container-glow')
 };
 
-// المحتوى الخاص بكل كلمة سر
+// كلمات السر والمحتوى
+const passwords = {
+    "adam": { name: "ملك", color: "#ff4081" },
+    "mahmoud": { name: "مريم", color: "#ff8a00" },
+    "mariam": { name: "مريم", color: "#40e0d0" }
+};
+
 const contentData = {
     "adam": {
         title: "إلى حبيبتي <span class='special-name'>ملك</span> ❤️",
@@ -63,145 +101,370 @@ const contentData = {
     }
 };
 
-// عناصر DOM
-const passwordScreen = document.getElementById('passwordScreen');
-const contentScreen = document.getElementById('contentScreen');
-const passwordInput = document.getElementById('passwordInput');
-const submitButton = document.getElementById('submitPassword');
-const contentContainer = document.getElementById('contentContainer');
-const backButton = document.getElementById('backButton');
-const secretMessage = document.getElementById('secretMessage');
-const clearInput = document.getElementById('clearInput');
-const pageLoader = document.getElementById('pageLoader');
+// حالة التطبيق
+const appState = {
+    currentUser: null,
+    isTransitioning: false,
+    musicEnabled: true,
+    touchEnabled: 'ontouchstart' in window
+};
 
-// عناصر العد التنازلي
-const daysElement = document.getElementById('days');
-const hoursElement = document.getElementById('hours');
-const minutesElement = document.getElementById('minutes');
-const secondsElement = document.getElementById('seconds');
+// تحسينات التحميل الأولي
+window.addEventListener('DOMContentLoaded', initializeApp);
 
-// تهيئة الموقع
-document.addEventListener('DOMContentLoaded', function() {
-    // إخفاء المحمل بعد تحميل الصفحة
-    setTimeout(() => {
-        pageLoader.classList.add('loaded');
+async function initializeApp() {
+    try {
+        // إظهار شاشة التحميل
+        showPageLoader();
+        
+        // تهيئة الصوتيات
+        await initializeAudio();
+        
+        // تهيئة الرسوم المتحركة
+        initializeAnimations();
+        
+        // تهيئة الأحداث
+        initializeEvents();
+        
+        // تهيئة العناصر الطافية
+        initializeFloatingElements();
+        
+        // بدء العد التنازلي
+        startCountdown();
+        
+        // إخفاء شاشة التحميل بعد تأخير
         setTimeout(() => {
-            pageLoader.style.display = 'none';
-        }, 500);
-    }, 1000);
+            hidePageLoader();
+            playSuccessSound();
+            showWelcomeMessage();
+        }, 2000);
+        
+    } catch (error) {
+        console.error('خطأ في تهيئة التطبيق:', error);
+        hidePageLoader();
+    }
+}
+
+function showPageLoader() {
+    elements.pageLoader.classList.remove('loaded');
+    elements.pageLoader.style.display = 'flex';
     
-    // تهيئة الحقل
-    passwordInput.focus();
+    // تحديث شريط التحميل
+    const loaderPercent = elements.pageLoader.querySelector('.loader-percent');
+    let progress = 0;
+    const interval = setInterval(() => {
+        progress += Math.random() * 10;
+        if (progress > 100) progress = 100;
+        loaderPercent.textContent = `${Math.floor(progress)}%`;
+        
+        if (progress === 100) {
+            clearInterval(interval);
+        }
+    }, 100);
+}
+
+function hidePageLoader() {
+    elements.pageLoader.classList.add('loaded');
+    setTimeout(() => {
+        elements.pageLoader.style.display = 'none';
+    }, 600);
+}
+
+async function initializeAudio() {
+    try {
+        // ضبط مستوى الصوت
+        elements.backgroundMusic.volume = 0.3;
+        elements.clickSound.volume = 0.2;
+        elements.successSound.volume = 0.3;
+        
+        // محاولة تشغيل الموسيقى الخلفية
+        if (appState.musicEnabled) {
+            await elements.backgroundMusic.play();
+        }
+    } catch (error) {
+        console.log('تعذر تشغيل الموسيقى تلقائياً');
+    }
+}
+
+function initializeAnimations() {
+    // تأثيرات الخلفية
+    animateBackgroundParticles();
+    
+    // تأثيرات العناصر الطافية
+    animateFloatingElements();
+    
+    // تأثيرات الحاوية
+    animateContainerGlow();
+    
+    // تأثيرات كتابة العنوان
+    animateTitleTyping();
+}
+
+function initializeEvents() {
+    // أحداث حقل الإدخال
+    elements.passwordInput.addEventListener('input', handleInputChange);
+    elements.passwordInput.addEventListener('focus', handleInputFocus);
+    elements.passwordInput.addEventListener('blur', handleInputBlur);
+    
+    // أحداث زر الإرسال
+    elements.submitPassword.addEventListener('click', handleSubmit);
+    elements.passwordInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleSubmit();
+    });
+    
+    // أحداث زر المسح
+    elements.clearInput.addEventListener('click', handleClearInput);
+    
+    // أحداث زر العودة
+    elements.backButton.addEventListener('click', handleBackButton);
+    
+    // أحداث اللمس للجوال
+    if (appState.touchEnabled) {
+        initializeTouchEvents();
+    }
     
     // تحديث العد التنازلي
-    updateCountdown();
     setInterval(updateCountdown, 1000);
     
-    // تشغيل الموسيقى الخلفية
-    setTimeout(() => {
-        const backgroundMusic = document.getElementById('backgroundMusic');
-        if (backgroundMusic) {
-            backgroundMusic.volume = 0.3;
-            backgroundMusic.play().catch(e => {
-                console.log("الموسيقى لا تعمل تلقائياً، يحتاج المستخدم للتفاعل");
-            });
+    // تحديث شريط التقدم
+    setInterval(updateLoveProgress, 2000);
+}
+
+function initializeTouchEvents() {
+    // تأثيرات اللمس
+    document.addEventListener('touchstart', (e) => {
+        if (e.target.tagName === 'BUTTON' || e.target.tagName === 'INPUT') {
+            createTouchRipple(e.touches[0]);
         }
-    }, 1500);
+    });
     
-    // إضافة تأثيرات للمس للجوال
-    initTouchEffects();
+    // منع التكبير على النقر المزدوج
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', (e) => {
+        const now = Date.now();
+        if (now - lastTouchEnd <= 300) {
+            e.preventDefault();
+        }
+        lastTouchEnd = now;
+    }, false);
+}
+
+function createTouchRipple(touch) {
+    const ripple = document.createElement('div');
+    ripple.className = 'effect-touch-ripple';
+    ripple.style.left = `${touch.clientX}px`;
+    ripple.style.top = `${touch.clientY}px`;
     
-    // تهيئة مؤشرات التمرير
-    initScrollIndicators();
-});
+    document.querySelector('.mobile-effects-advanced').appendChild(ripple);
+    
+    setTimeout(() => {
+        ripple.style.animation = 'rippleExpand 0.6s ease-out forwards';
+        setTimeout(() => ripple.remove(), 600);
+    }, 10);
+}
 
-// التحقق من كلمة السر
-submitButton.addEventListener('click', checkPassword);
-passwordInput.addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        checkPassword();
-    }
-});
-
-// زر مسح النص
-clearInput.addEventListener('click', function() {
-    passwordInput.value = '';
-    passwordInput.focus();
-    updateClearButton();
-});
-
-passwordInput.addEventListener('input', updateClearButton);
-
-function updateClearButton() {
-    if (passwordInput.value.length > 0) {
-        clearInput.classList.add('active');
-    } else {
-        clearInput.classList.remove('active');
+function animateBackgroundParticles() {
+    if (!elements.bgParticles) return;
+    
+    const colors = ['#ff4081', '#ff8a00', '#40e0d0'];
+    const particles = elements.bgParticles;
+    
+    // إنشاء جسيمات إضافية
+    for (let i = 0; i < 20; i++) {
+        setTimeout(() => {
+            const particle = document.createElement('div');
+            particle.style.cssText = `
+                position: absolute;
+                width: ${Math.random() * 10 + 5}px;
+                height: ${Math.random() * 10 + 5}px;
+                background: ${colors[Math.floor(Math.random() * colors.length)]};
+                border-radius: 50%;
+                opacity: ${Math.random() * 0.3 + 0.1};
+                left: ${Math.random() * 100}%;
+                top: ${Math.random() * 100}%;
+                animation: particleFloat ${Math.random() * 10 + 10}s linear infinite;
+                animation-delay: ${Math.random() * 5}s;
+            `;
+            particles.appendChild(particle);
+            
+            // إزالة الجسيم بعد انتهاء الحركة
+            setTimeout(() => particle.remove(), 15000);
+        }, i * 300);
     }
 }
 
-function checkPassword() {
-    const input = passwordInput.value.toLowerCase().trim();
+function animateFloatingElements() {
+    elements.floatingElements.forEach((element, index) => {
+        element.style.animationDelay = `${index * 2}s`;
+        element.style.animationDuration = `${Math.random() * 10 + 15}s`;
+    });
+}
+
+function animateContainerGlow() {
+    if (!elements.containerGlow) return;
+    
+    const colors = [
+        'rgba(255, 64, 129, 0.2)',
+        'rgba(255, 138, 0, 0.2)',
+        'rgba(64, 224, 208, 0.2)'
+    ];
+    
+    setInterval(() => {
+        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+        elements.containerGlow.style.background = `linear-gradient(45deg, 
+            transparent, 
+            ${randomColor}, 
+            transparent)`;
+    }, 3000);
+}
+
+function animateTitleTyping() {
+    const titleChars = document.querySelectorAll('.title-char');
+    titleChars.forEach((char, index) => {
+        char.style.animationDelay = `${index * 0.1}s`;
+    });
+}
+
+function handleInputChange() {
+    const value = elements.passwordInput.value;
+    const clearBtn = elements.clearInput;
+    
+    if (value.length > 0) {
+        clearBtn.classList.add('active');
+        animateInputSuccess();
+    } else {
+        clearBtn.classList.remove('active');
+    }
+}
+
+function handleInputFocus() {
+    elements.passwordInput.parentElement.classList.add('focused');
+    playClickSound();
+}
+
+function handleInputBlur() {
+    elements.passwordInput.parentElement.classList.remove('focused');
+}
+
+function handleClearInput() {
+    elements.passwordInput.value = '';
+    elements.passwordInput.focus();
+    elements.clearInput.classList.remove('active');
+    playClickSound();
+}
+
+async function handleSubmit() {
+    if (appState.isTransitioning) return;
+    
+    const input = elements.passwordInput.value.toLowerCase().trim();
+    
+    if (!input) {
+        showInputError('يرجى إدخال كلمة السر');
+        return;
+    }
+    
+    playClickSound();
     
     if (passwords[input]) {
-        // كلمة السر صحيحة
-        passwordInput.blur();
-        showContent(input);
-        showSecretMessage(`مرحبًا ${passwords[input]}! ❤️`);
-        
-        // تأثير اهتزاز إيجابي
-        submitButton.style.animation = 'successPulse 0.5s';
-        setTimeout(() => {
-            submitButton.style.animation = '';
-        }, 500);
+        await handleSuccess(input);
     } else {
-        // كلمة السر خاطئة
-        passwordInput.style.animation = 'shake 0.5s';
-        passwordInput.style.borderColor = '#ff3333';
-        passwordInput.value = '';
-        updateClearButton();
-        
-        setTimeout(() => {
-            passwordInput.style.animation = '';
-            passwordInput.style.borderColor = '';
-            passwordInput.focus();
-        }, 500);
-        
-        // تأثير خطأ
-        submitButton.style.transform = 'translateX(-10px)';
-        setTimeout(() => {
-            submitButton.style.transform = 'translateX(10px)';
-            setTimeout(() => {
-                submitButton.style.transform = '';
-            }, 100);
-        }, 100);
+        await handleError();
     }
 }
 
-function showContent(passwordKey) {
-    // الانتقال الناعم للشاشة
-    passwordScreen.classList.remove('active');
+async function handleSuccess(passwordKey) {
+    appState.isTransitioning = true;
+    appState.currentUser = passwordKey;
+    
+    // إضافة تأثيرات النجاح
+    elements.submitPassword.classList.add('success');
+    animateSuccessEffects();
+    playSuccessSound();
+    
+    // إخفاء الشاشة الحالية بإنيميشن
+    await animateScreenTransitionOut(elements.passwordScreen);
+    
+    // إظهار الشاشة الجديدة بإنيميشن
+    await showContentScreen(passwordKey);
+    
+    // إظهار رسالة السر
+    showSecretMessage(`مرحبًا ${passwords[passwordKey].name}! ❤️`);
+    
+    appState.isTransitioning = false;
+}
+
+async function handleError() {
+    appState.isTransitioning = true;
+    
+    // تأثيرات الخطأ
+    elements.passwordInput.classList.add('error');
+    animateErrorEffects();
+    
+    // رسالة الخطأ
+    showInputError('كلمة السر غير صحيحة! حاول مرة أخرى');
+    
+    // إعادة تعيين الحقل
     setTimeout(() => {
-        passwordScreen.style.display = 'none';
-        contentScreen.style.display = 'flex';
+        elements.passwordInput.value = '';
+        elements.passwordInput.classList.remove('error');
+        elements.clearInput.classList.remove('active');
+        elements.passwordInput.focus();
+        appState.isTransitioning = false;
+    }, 1500);
+}
+
+async function animateScreenTransitionOut(screen) {
+    return new Promise(resolve => {
+        // تأثيرات الخروج
+        const elementsToAnimate = screen.querySelectorAll('.heart-animation, .main-title, .password-input, .hint');
+        
+        elementsToAnimate.forEach((element, index) => {
+            setTimeout(() => {
+                element.style.animation = `fadeOutUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards`;
+            }, index * 100);
+        });
+        
+        // إخفاء الشاشة
         setTimeout(() => {
-            contentScreen.classList.add('active');
-            loadContent(passwordKey);
-        }, 50);
-    }, 400);
+            screen.classList.remove('active');
+            screen.style.display = 'none';
+            resolve();
+        }, 800);
+    });
+}
+
+async function showContentScreen(passwordKey) {
+    // إظهار الشاشة الجديدة
+    elements.contentScreen.style.display = 'flex';
+    setTimeout(() => {
+        elements.contentScreen.classList.add('active');
+    }, 50);
+    
+    // تحميل المحتوى
+    loadContent(passwordKey);
+    
+    // تشغيل تأثيرات الدخول
+    animateEntryEffects();
+    
+    // بدء إنيميشنات المحتوى
+    animateContentElements();
 }
 
 function loadContent(passwordKey) {
     const data = contentData[passwordKey];
     
+    // تحديث شريط التقدم باللون المناسب
+    const color = passwords[passwordKey].color;
+    document.documentElement.style.setProperty('--primary-color', color);
+    
     // بناء المحتوى
-    contentContainer.innerHTML = `
+    elements.contentContainer.innerHTML = `
         <div class="content">
-            <h2>${data.title}</h2>
+            <h2 class="content-title">${data.title}</h2>
             <div class="message">${data.message}</div>
             <div class="memories">
                 ${data.memories.map((memory, index) => `
-                    <div class="memory-item" style="animation-delay: ${index * 0.1}s">
+                    <div class="memory-item" style="animation-delay: ${index * 0.2}s">
                         <i class="fas fa-heart"></i>
                         <div class="memory-text">${memory}</div>
                     </div>
@@ -210,212 +473,369 @@ function loadContent(passwordKey) {
         </div>
     `;
     
-    // إضافة تأثيرات للذكريات
+    // إضافة تأثيرات للعناصر الجديدة
     setTimeout(() => {
-        const memoryItems = document.querySelectorAll('.memory-item');
-        memoryItems.forEach((item, index) => {
-            setTimeout(() => {
-                item.style.opacity = '1';
-                item.style.transform = 'translateY(0)';
-            }, index * 100);
+        const contentElements = elements.contentContainer.querySelectorAll('.content-title, .message, .memory-item');
+        contentElements.forEach((element, index) => {
+            element.style.animation = `fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards ${index * 0.1}s`;
         });
     }, 300);
 }
 
-// زر العودة
-backButton.addEventListener('click', function() {
-    contentScreen.classList.remove('active');
-    setTimeout(() => {
-        contentScreen.style.display = 'none';
-        passwordScreen.style.display = 'flex';
-        setTimeout(() => {
-            passwordScreen.classList.add('active');
-            passwordInput.value = '';
-            passwordInput.focus();
-            updateClearButton();
-        }, 50);
-    }, 400);
-});
-
-// رسالة سرية
-function showSecretMessage(text) {
-    const messageText = secretMessage.querySelector('p');
-    messageText.textContent = text;
-    secretMessage.style.display = 'block';
+function animateEntryEffects() {
+    elements.entrySparks.forEach(spark => {
+        spark.style.animationPlayState = 'running';
+    });
     
-    setTimeout(() => {
-        secretMessage.style.opacity = '0';
-        setTimeout(() => {
-            secretMessage.style.display = 'none';
-            secretMessage.style.opacity = '1';
-        }, 300);
-    }, 2000);
+    // تأثيرات اضافية
+    createEntryConfetti();
 }
 
-// العد التنازلي
+function createEntryConfetti() {
+    const colors = ['#ff4081', '#ff8a00', '#40e0d0', '#ffeb3b'];
+    const confettiContainer = document.querySelector('.secret-confetti');
+    
+    for (let i = 0; i < 50; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti-piece';
+        confetti.innerHTML = ['❤️', '✨', '🌟', '🎉'][Math.floor(Math.random() * 4)];
+        confetti.style.cssText = `
+            position: absolute;
+            font-size: ${Math.random() * 20 + 10}px;
+            color: ${colors[Math.floor(Math.random() * colors.length)]};
+            left: ${Math.random() * 100}%;
+            top: -20px;
+            animation: confettiFall ${Math.random() * 3 + 2}s linear forwards;
+            animation-delay: ${Math.random() * 1}s;
+            opacity: 0;
+        `;
+        confettiContainer.appendChild(confetti);
+        
+        setTimeout(() => confetti.remove(), 4000);
+    }
+}
+
+function animateContentElements() {
+    // إنيميشنات شريط التقدم
+    const progressFill = elements.progressBar;
+    progressFill.style.animation = 'progressWave 2s linear infinite';
+    
+    // إنيميشنات العد التنازلي
+    const timeUnits = document.querySelectorAll('.time-unit');
+    timeUnits.forEach((unit, index) => {
+        unit.style.animation = `timeUnitFloat 3s ease-in-out infinite ${index * 0.2}s`;
+    });
+}
+
+function handleBackButton() {
+    if (appState.isTransitioning) return;
+    
+    playClickSound();
+    
+    // تأثيرات الخروج
+    animateScreenTransitionOut(elements.contentScreen);
+    
+    // العودة للشاشة الرئيسية
+    setTimeout(() => {
+        elements.contentScreen.style.display = 'none';
+        elements.passwordScreen.style.display = 'flex';
+        setTimeout(() => {
+            elements.passwordScreen.classList.add('active');
+            elements.passwordInput.value = '';
+            elements.passwordInput.focus();
+            
+            // إعادة تعيين الإنيميشنات
+            resetAnimations();
+        }, 50);
+    }, 800);
+}
+
+function resetAnimations() {
+    // إعادة تعيين عناصر الشاشة الرئيسية
+    const elementsToReset = elements.passwordScreen.querySelectorAll('.heart-animation, .main-title, .password-input, .hint');
+    elementsToReset.forEach(element => {
+        element.style.animation = '';
+    });
+}
+
+function showSecretMessage(text) {
+    const secretText = elements.secretMessage.querySelector('.secret-text');
+    secretText.textContent = text;
+    
+    elements.secretMessage.style.display = 'block';
+    
+    // تأثير إظهار الرسالة
+    setTimeout(() => {
+        elements.secretMessage.style.opacity = '0';
+        setTimeout(() => {
+            elements.secretMessage.style.display = 'none';
+            elements.secretMessage.style.opacity = '1';
+        }, 300);
+    }, 2500);
+}
+
+function showInputError(message) {
+    const inputContainer = elements.passwordInput.parentElement;
+    
+    // إضافة رسالة الخطأ
+    let errorElement = inputContainer.querySelector('.error-message');
+    if (!errorElement) {
+        errorElement = document.createElement('div');
+        errorElement.className = 'error-message';
+        inputContainer.appendChild(errorElement);
+    }
+    
+    errorElement.textContent = message;
+    errorElement.style.animation = 'fadeInUp 0.3s forwards';
+    
+    // إزالة رسالة الخطأ بعد 3 ثواني
+    setTimeout(() => {
+        errorElement.style.animation = 'fadeOutDown 0.3s forwards';
+        setTimeout(() => errorElement.remove(), 300);
+    }, 3000);
+}
+
+function animateSuccessEffects() {
+    // تأثيرات الزر
+    const btnRipple = elements.submitPassword.querySelector('.btn-ripple');
+    btnRipple.style.animation = 'rippleExpand 0.6s ease-out';
+    
+    // تأثيرات اضافية
+    createSuccessParticles();
+}
+
+function animateErrorEffects() {
+    // تأثير اهتزاز
+    elements.passwordInput.style.animation = 'errorShake 0.5s';
+    
+    // تأثير لوني
+    elements.passwordInput.style.borderColor = '#ff3333';
+    elements.passwordInput.style.boxShadow = '0 0 0 4px rgba(255, 51, 51, 0.2)';
+    
+    setTimeout(() => {
+        elements.passwordInput.style.animation = '';
+        elements.passwordInput.style.borderColor = '';
+        elements.passwordInput.style.boxShadow = '';
+    }, 500);
+}
+
+function createSuccessParticles() {
+    const submitBtn = elements.submitPassword;
+    const rect = submitBtn.getBoundingClientRect();
+    const colors = ['#ff4081', '#ff8a00', '#40e0d0', '#ffeb3b'];
+    
+    for (let i = 0; i < 20; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'success-particle';
+        particle.style.cssText = `
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background: ${colors[Math.floor(Math.random() * colors.length)]};
+            border-radius: 50%;
+            left: ${rect.left + rect.width / 2}px;
+            top: ${rect.top + rect.height / 2}px;
+            z-index: 1000;
+            pointer-events: none;
+            animation: successParticle ${Math.random() * 1 + 0.5}s ease-out forwards;
+        `;
+        document.body.appendChild(particle);
+        
+        setTimeout(() => particle.remove(), 1000);
+    }
+}
+
+function startCountdown() {
+    updateCountdown();
+    
+    // تحديث مستمر
+    setInterval(updateCountdown, 1000);
+}
+
 function updateCountdown() {
     const now = new Date();
     const newYear = new Date('January 1, 2026 00:00:00');
     const diff = newYear - now;
+    
+    if (diff <= 0) {
+        // وصلنا للسنة الجديدة
+        elements.days.textContent = '00';
+        elements.hours.textContent = '00';
+        elements.minutes.textContent = '00';
+        elements.seconds.textContent = '00';
+        
+        // تأثيرات الاحتفال
+        if (!document.body.classList.contains('new-year-celebration')) {
+            startNewYearCelebration();
+        }
+        return;
+    }
     
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((diff % (1000 * 60)) / 1000);
     
-    daysElement.textContent = days.toString().padStart(2, '0');
-    hoursElement.textContent = hours.toString().padStart(2, '0');
-    minutesElement.textContent = minutes.toString().padStart(2, '0');
-    secondsElement.textContent = seconds.toString().padStart(2, '0');
-    
-    // تحديث شريط التقدم
-    const totalSeconds = 365 * 24 * 60 * 60;
-    const remainingSeconds = days * 24 * 60 * 60 + hours * 60 * 60 + minutes * 60 + seconds;
-    const progressPercent = 100 - (remainingSeconds / totalSeconds * 100);
-    const lovePercent = Math.min(100, Math.round(progressPercent + 50));
-    
-    document.getElementById('lovePercent').textContent = `${lovePercent}%`;
+    // تحديث الأرقام مع تأثير flip
+    updateNumberWithFlip(elements.days, days);
+    updateNumberWithFlip(elements.hours, hours);
+    updateNumberWithFlip(elements.minutes, minutes);
+    updateNumberWithFlip(elements.seconds, seconds);
     
     // تأثيرات خاصة عند اقتراب السنة الجديدة
     if (days < 7) {
         document.querySelector('.countdown-icon').style.animationDuration = '1s';
+        
         if (days < 3) {
             document.querySelector('.countdown').style.animation = 'pulse 1s infinite';
         }
     }
 }
 
-// تأثيرات اللمس للجوال
-function initTouchEffects() {
-    let isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+function updateNumberWithFlip(element, newValue) {
+    const currentValue = parseInt(element.textContent);
+    const formattedValue = newValue.toString().padStart(2, '0');
     
-    if (isTouchDevice) {
-        document.addEventListener('touchstart', function(e) {
-            const touch = e.touches[0];
-            createTouchRipple(touch.clientX, touch.clientY);
-        });
-        
-        // تحسين تجربة اللمس للأزرار
-        const buttons = document.querySelectorAll('button');
-        buttons.forEach(button => {
-            button.addEventListener('touchstart', function() {
-                this.style.transform = 'scale(0.95)';
-            });
-            
-            button.addEventListener('touchend', function() {
-                this.style.transform = '';
-            });
-        });
-    }
-}
-
-function createTouchRipple(x, y) {
-    const ripple = document.querySelector('.touch-ripple');
-    if (ripple) {
-        ripple.style.left = `${x}px`;
-        ripple.style.top = `${y}px`;
-        ripple.style.animation = 'ripple 0.6s linear';
-        
-        setTimeout(() => {
-            ripple.style.animation = '';
-        }, 600);
-    }
-}
-
-// مؤشرات التمرير
-function initScrollIndicators() {
-    let scrollTimeout;
-    
-    window.addEventListener('scroll', function() {
-        clearTimeout(scrollTimeout);
-        
-        const scrollY = window.scrollY;
-        const windowHeight = window.innerHeight;
-        const documentHeight = document.documentElement.scrollHeight;
-        
-        const scrollPercentage = (scrollY / (documentHeight - windowHeight)) * 100;
-        const dots = document.querySelectorAll('.scroll-dots .dot');
-        
-        if (dots.length > 0) {
-            if (scrollPercentage < 33) {
-                dots[0].classList.add('active');
-                dots[1].classList.remove('active');
-                dots[2].classList.remove('active');
-            } else if (scrollPercentage < 66) {
-                dots[0].classList.remove('active');
-                dots[1].classList.add('active');
-                dots[2].classList.remove('active');
-            } else {
-                dots[0].classList.remove('active');
-                dots[1].classList.remove('active');
-                dots[2].classList.add('active');
-            }
+    if (currentValue !== newValue) {
+        // تأثير flip
+        const flipElement = element.parentElement.querySelector('.time-flip');
+        if (flipElement) {
+            flipElement.style.animation = 'flipEffect 0.5s ease-out';
+            setTimeout(() => {
+                flipElement.style.animation = '';
+            }, 500);
         }
         
-        scrollTimeout = setTimeout(() => {
-            const scrollIndicator = document.querySelector('.swipe-indicator');
-            if (scrollIndicator && scrollY > 100) {
-                scrollIndicator.style.opacity = '0';
-                scrollIndicator.style.transition = 'opacity 0.5s';
-            }
-        }, 100);
-    });
+        // تحديث القيمة
+        element.textContent = formattedValue;
+        
+        // تأثير إضافي للأرقام
+        element.style.animation = 'numberPop 0.3s ease-out';
+        setTimeout(() => {
+            element.style.animation = '';
+        }, 300);
+    }
 }
 
-// تحسينات أداء للجوال
-let lastScrollTop = 0;
-let ticking = false;
-
-window.addEventListener('scroll', function() {
-    if (!ticking) {
-        window.requestAnimationFrame(function() {
-            const st = window.pageYOffset || document.documentElement.scrollTop;
-            if (st > lastScrollTop) {
-                // التمرير لأسفل
-                document.body.style.overflowY = 'auto';
-            }
-            lastScrollTop = st <= 0 ? 0 : st;
-            ticking = false;
-        });
-        ticking = true;
-    }
-});
-
-// تحسينات للوضع الأفقي
-function handleOrientationChange() {
-    const isLandscape = window.innerWidth > window.innerHeight;
+function updateLoveProgress() {
+    if (!elements.lovePercent) return;
     
-    if (isLandscape) {
-        document.body.classList.add('landscape');
-        document.querySelector('.container')?.classList.add('landscape-mode');
+    // تحديث عشوائي لمستوى الحب (للإثراء فقط)
+    const currentPercent = parseInt(elements.lovePercent.textContent);
+    const change = Math.random() * 10 - 5; // تغيير بين -5 و +5
+    let newPercent = Math.min(100, Math.max(50, currentPercent + change));
+    
+    elements.lovePercent.textContent = `${Math.round(newPercent)}%`;
+    elements.progressBar.style.width = `${newPercent}%`;
+    
+    // تأثيرات اللون
+    if (newPercent > 90) {
+        elements.lovePercent.style.color = '#ff4081';
+    } else if (newPercent > 70) {
+        elements.lovePercent.style.color = '#ff8a00';
     } else {
-        document.body.classList.remove('landscape');
-        document.querySelector('.container')?.classList.remove('landscape-mode');
+        elements.lovePercent.style.color = '#40e0d0';
     }
 }
 
-window.addEventListener('resize', handleOrientationChange);
-window.addEventListener('orientationchange', handleOrientationChange);
+function startNewYearCelebration() {
+    document.body.classList.add('new-year-celebration');
+    
+    // رسالة تهنئة
+    showSecretMessage('🎉 كل عام وأنتم بخير! سنة 2026 سعيدة! 🎊');
+    
+    // تأثيرات احتفالية
+    createCelebrationConfetti();
+    
+    // تحديث رسالة السنة الجديدة
+    const yearMessage = document.querySelector('.new-year-message');
+    if (yearMessage) {
+        yearMessage.querySelector('h3').textContent = '🎊 سنة 2026 سعيدة! 🎊';
+        yearMessage.querySelector('p:first-of-type').textContent = 'كل عام وأنتم بخير!';
+        yearMessage.querySelector('p:last-of-type').textContent = 'نتمنى لكم سنة مليئة بالنجاح والسعادة!';
+    }
+}
 
-// تهيئة عند البدء
-handleOrientationChange();
+function createCelebrationConfetti() {
+    const colors = ['#ff4081', '#ff8a00', '#40e0d0', '#ffeb3b', '#ffffff'];
+    const symbols = ['🎉', '✨', '🌟', '❤️', '🎊', '💫', '🥳', '🎈'];
+    
+    for (let i = 0; i < 100; i++) {
+        setTimeout(() => {
+            const confetti = document.createElement('div');
+            confetti.className = 'celebration-confetti';
+            confetti.innerHTML = symbols[Math.floor(Math.random() * symbols.length)];
+            confetti.style.cssText = `
+                position: fixed;
+                font-size: ${Math.random() * 24 + 16}px;
+                color: ${colors[Math.floor(Math.random() * colors.length)]};
+                left: ${Math.random() * 100}%;
+                top: -50px;
+                z-index: 10000;
+                pointer-events: none;
+                animation: celebrationFall ${Math.random() * 3 + 2}s linear forwards;
+                transform: rotate(${Math.random() * 360}deg);
+            `;
+            document.body.appendChild(confetti);
+            
+            setTimeout(() => confetti.remove(), 5000);
+        }, i * 50);
+    }
+}
+
+function showWelcomeMessage() {
+    setTimeout(() => {
+        showSecretMessage('مرحبًا بك في عالم الحب والرومانسية ❤️');
+    }, 1000);
+}
+
+function playClickSound() {
+    try {
+        elements.clickSound.currentTime = 0;
+        elements.clickSound.play();
+    } catch (error) {
+        // تجاهل الأخطاء الصوتية
+    }
+}
+
+function playSuccessSound() {
+    try {
+        elements.successSound.currentTime = 0;
+        elements.successSound.play();
+    } catch (error) {
+        // تجاهل الأخطاء الصوتية
+    }
+}
 
 // إضافة أنماط CSS ديناميكية للحركات
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes shake {
-        0%, 100% { transform: translateX(0); }
-        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
-        20%, 40%, 60%, 80% { transform: translateX(5px); }
+const dynamicStyles = document.createElement('style');
+dynamicStyles.textContent = `
+    @keyframes fadeOutUp {
+        to {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
     }
     
-    @keyframes successPulse {
-        0% { transform: scale(1); box-shadow: 0 8px 25px rgba(255, 64, 129, 0.3); }
-        50% { transform: scale(1.05); box-shadow: 0 12px 30px rgba(255, 64, 129, 0.5); }
-        100% { transform: scale(1); box-shadow: 0 8px 25px rgba(255, 64, 129, 0.3); }
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
     
-    @keyframes ripple {
+    @keyframes fadeOutDown {
+        to {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+    }
+    
+    @keyframes rippleExpand {
         0% {
             transform: scale(0);
             opacity: 0.5;
@@ -426,50 +846,148 @@ style.textContent = `
         }
     }
     
-    @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.7; }
+    @keyframes successParticle {
+        0% {
+            transform: translate(0, 0) scale(1);
+            opacity: 1;
+        }
+        100% {
+            transform: translate(${Math.random() * 200 - 100}px, ${Math.random() * 200 - 100}px) scale(0);
+            opacity: 0;
+        }
     }
     
-    .landscape-mode {
-        max-width: 90% !important;
-        margin-top: 20px !important;
-        margin-bottom: 20px !important;
+    @keyframes confettiFall {
+        0% {
+            transform: translateY(0) rotate(0deg);
+            opacity: 0;
+        }
+        10% {
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(100vh) rotate(720deg);
+            opacity: 0;
+        }
     }
     
-    .memory-text {
-        margin-top: 8px;
-        font-size: 0.9rem;
-        color: rgba(255, 255, 255, 0.9);
+    @keyframes celebrationFall {
+        0% {
+            transform: translateY(0) rotate(0deg);
+            opacity: 0;
+        }
+        10% {
+            opacity: 1;
+        }
+        100% {
+            transform: translateY(100vh) rotate(${Math.random() * 720}deg);
+            opacity: 0;
+        }
+    }
+    
+    @keyframes particleFloat {
+        0% {
+            transform: translate(0, 0) scale(1);
+            opacity: 0;
+        }
+        10% {
+            opacity: 0.3;
+        }
+        90% {
+            opacity: 0.3;
+        }
+        100% {
+            transform: translate(${Math.random() * 200 - 100}px, ${Math.random() * 200 - 100}px) scale(0);
+            opacity: 0;
+        }
+    }
+    
+    @keyframes numberPop {
+        0% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.2);
+        }
+        100% {
+            transform: scale(1);
+        }
+    }
+    
+    @keyframes progressWave {
+        0% {
+            background-position: 0% 50%;
+        }
+        100% {
+            background-position: 200% 50%;
+        }
+    }
+    
+    .error-message {
+        position: absolute;
+        bottom: -25px;
+        right: 0;
+        color: #ff3333;
+        font-size: 12px;
+        font-weight: 500;
+        background: rgba(255, 51, 51, 0.1);
+        padding: 4px 12px;
+        border-radius: 12px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 51, 51, 0.2);
+        z-index: 10;
+    }
+    
+    .success-particle {
+        filter: drop-shadow(0 0 5px currentColor);
+    }
+    
+    .celebration-confetti {
+        filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+    }
+    
+    .new-year-celebration .container {
+        animation: celebrationGlow 2s ease-in-out infinite;
+    }
+    
+    @keyframes celebrationGlow {
+        0%, 100% {
+            box-shadow: 
+                0 15px 35px rgba(255, 64, 129, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                0 0 0 1px rgba(255, 255, 255, 0.05);
+        }
+        50% {
+            box-shadow: 
+                0 25px 50px rgba(255, 64, 129, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
     }
 `;
-document.head.appendChild(style);
+document.head.appendChild(dynamicStyles);
 
-// منع التمرير الزائد على الجوال
-document.body.addEventListener('touchmove', function(e) {
-    if (e.target.classList.contains('container') || 
-        e.target.closest('.container')) {
-        const container = e.target.closest('.container');
-        const isAtTop = container.scrollTop === 0;
-        const isAtBottom = container.scrollHeight - container.scrollTop === container.clientHeight;
-        
-        if (isAtTop && e.touches[0].clientY > 0) {
-            e.preventDefault();
-        }
-        if (isAtBottom && e.touches[0].clientY < 0) {
-            e.preventDefault();
-        }
+// دعم الجوال المتقدم
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch(error => {
+            console.log('Service Worker registration failed:', error);
+        });
+    });
+}
+
+// تحسينات لأداء الجوال
+let lastScrollTop = 0;
+window.addEventListener('scroll', () => {
+    const st = window.pageYOffset || document.documentElement.scrollTop;
+    if (st > lastScrollTop) {
+        // التمرير لأسفل
+        document.body.style.overflowY = 'auto';
     }
-}, { passive: false });
-
-// تحميل الصفحة مع تأثيرات متدرجة
-window.addEventListener('load', function() {
-    setTimeout(() => {
-        document.body.classList.add('page-loaded');
-    }, 100);
+    lastScrollTop = st <= 0 ? 0 : st;
 });
 
-// رسالة ترحيب
+// تهيئة تلقائية عند الانتهاء
 setTimeout(() => {
-    showSecretMessage("مرحبًا بك في عالم الحب والرومانسية ❤️");
-}, 2000);
+    document.body.classList.add('loaded');
+}, 100);
