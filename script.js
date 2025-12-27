@@ -63,7 +63,7 @@ const contentData = {
     }
 };
 
-// العناصر الرئيسية في الصفحة
+// عناصر DOM
 const passwordScreen = document.getElementById('passwordScreen');
 const contentScreen = document.getElementById('contentScreen');
 const passwordInput = document.getElementById('passwordInput');
@@ -71,10 +71,8 @@ const submitButton = document.getElementById('submitPassword');
 const contentContainer = document.getElementById('contentContainer');
 const backButton = document.getElementById('backButton');
 const secretMessage = document.getElementById('secretMessage');
-const musicToggle = document.getElementById('musicToggle');
-const backgroundMusic = document.getElementById('backgroundMusic');
-const progressBar = document.getElementById('progressBar');
-const lovePercent = document.getElementById('lovePercent');
+const clearInput = document.getElementById('clearInput');
+const pageLoader = document.getElementById('pageLoader');
 
 // عناصر العد التنازلي
 const daysElement = document.getElementById('days');
@@ -82,31 +80,42 @@ const hoursElement = document.getElementById('hours');
 const minutesElement = document.getElementById('minutes');
 const secondsElement = document.getElementById('seconds');
 
-// تهيئة الموقع عند التحميل
+// تهيئة الموقع
 document.addEventListener('DOMContentLoaded', function() {
-    // إضافة قلوب متحركة
-    createFloatingHearts();
+    // إخفاء المحمل بعد تحميل الصفحة
+    setTimeout(() => {
+        pageLoader.classList.add('loaded');
+        setTimeout(() => {
+            pageLoader.style.display = 'none';
+        }, 500);
+    }, 1000);
     
-    // بدء العد التنازلي للعام الجديد
+    // تهيئة الحقل
+    passwordInput.focus();
+    
+    // تحديث العد التنازلي
     updateCountdown();
     setInterval(updateCountdown, 1000);
     
-    // تشغيل الموسيقى الخلفية تلقائيًا
+    // تشغيل الموسيقى الخلفية
     setTimeout(() => {
-        backgroundMusic.play().catch(e => console.log("التشغيل التلقائي للموسيقى متوقف"));
-    }, 1000);
+        const backgroundMusic = document.getElementById('backgroundMusic');
+        if (backgroundMusic) {
+            backgroundMusic.volume = 0.3;
+            backgroundMusic.play().catch(e => {
+                console.log("الموسيقى لا تعمل تلقائياً، يحتاج المستخدم للتفاعل");
+            });
+        }
+    }, 1500);
     
-    // إضافة تأثير كتابة في حقل كلمة السر
-    passwordInput.addEventListener('focus', function() {
-        this.style.transform = 'scale(1.05)';
-    });
+    // إضافة تأثيرات للمس للجوال
+    initTouchEffects();
     
-    passwordInput.addEventListener('blur', function() {
-        this.style.transform = 'scale(1)';
-    });
+    // تهيئة مؤشرات التمرير
+    initScrollIndicators();
 });
 
-// التعامل مع إدخال كلمة السر
+// التحقق من كلمة السر
 submitButton.addEventListener('click', checkPassword);
 passwordInput.addEventListener('keypress', function(e) {
     if (e.key === 'Enter') {
@@ -114,101 +123,136 @@ passwordInput.addEventListener('keypress', function(e) {
     }
 });
 
+// زر مسح النص
+clearInput.addEventListener('click', function() {
+    passwordInput.value = '';
+    passwordInput.focus();
+    updateClearButton();
+});
+
+passwordInput.addEventListener('input', updateClearButton);
+
+function updateClearButton() {
+    if (passwordInput.value.length > 0) {
+        clearInput.classList.add('active');
+    } else {
+        clearInput.classList.remove('active');
+    }
+}
+
 function checkPassword() {
     const input = passwordInput.value.toLowerCase().trim();
     
     if (passwords[input]) {
         // كلمة السر صحيحة
+        passwordInput.blur();
         showContent(input);
         showSecretMessage(`مرحبًا ${passwords[input]}! ❤️`);
+        
+        // تأثير اهتزاز إيجابي
+        submitButton.style.animation = 'successPulse 0.5s';
+        setTimeout(() => {
+            submitButton.style.animation = '';
+        }, 500);
     } else {
         // كلمة السر خاطئة
         passwordInput.style.animation = 'shake 0.5s';
-        passwordInput.style.borderColor = '#ff0000';
+        passwordInput.style.borderColor = '#ff3333';
         passwordInput.value = '';
-        passwordInput.placeholder = 'كلمة السر غير صحيحة! حاول مجددًا...';
+        updateClearButton();
         
         setTimeout(() => {
             passwordInput.style.animation = '';
             passwordInput.style.borderColor = '';
-            passwordInput.placeholder = 'أدخل كلمة السر هنا...';
-        }, 1000);
+            passwordInput.focus();
+        }, 500);
+        
+        // تأثير خطأ
+        submitButton.style.transform = 'translateX(-10px)';
+        setTimeout(() => {
+            submitButton.style.transform = 'translateX(10px)';
+            setTimeout(() => {
+                submitButton.style.transform = '';
+            }, 100);
+        }, 100);
     }
 }
 
 function showContent(passwordKey) {
-    // الانتقال إلى شاشة المحتوى
+    // الانتقال الناعم للشاشة
     passwordScreen.classList.remove('active');
-    contentScreen.classList.add('active');
-    
-    // تعبئة المحتوى المناسب
+    setTimeout(() => {
+        passwordScreen.style.display = 'none';
+        contentScreen.style.display = 'flex';
+        setTimeout(() => {
+            contentScreen.classList.add('active');
+            loadContent(passwordKey);
+        }, 50);
+    }, 400);
+}
+
+function loadContent(passwordKey) {
     const data = contentData[passwordKey];
+    
+    // بناء المحتوى
     contentContainer.innerHTML = `
         <div class="content">
             <h2>${data.title}</h2>
             <div class="message">${data.message}</div>
             <div class="memories">
-                ${data.memories.map(memory => `
-                    <div class="memory-item">
-                        <i class="fas fa-heart"></i> ${memory}
+                ${data.memories.map((memory, index) => `
+                    <div class="memory-item" style="animation-delay: ${index * 0.1}s">
+                        <i class="fas fa-heart"></i>
+                        <div class="memory-text">${memory}</div>
                     </div>
                 `).join('')}
             </div>
         </div>
     `;
     
-    // إضافة تأثيرات للعناصر الجديدة
+    // إضافة تأثيرات للذكريات
     setTimeout(() => {
         const memoryItems = document.querySelectorAll('.memory-item');
         memoryItems.forEach((item, index) => {
             setTimeout(() => {
                 item.style.opacity = '1';
                 item.style.transform = 'translateY(0)';
-            }, index * 200);
+            }, index * 100);
         });
-    }, 500);
+    }, 300);
 }
 
 // زر العودة
 backButton.addEventListener('click', function() {
     contentScreen.classList.remove('active');
-    passwordScreen.classList.add('active');
-    passwordInput.value = '';
-    passwordInput.focus();
+    setTimeout(() => {
+        contentScreen.style.display = 'none';
+        passwordScreen.style.display = 'flex';
+        setTimeout(() => {
+            passwordScreen.classList.add('active');
+            passwordInput.value = '';
+            passwordInput.focus();
+            updateClearButton();
+        }, 50);
+    }, 400);
 });
 
-// إظهار رسالة سرية لفترة وجيزة
+// رسالة سرية
 function showSecretMessage(text) {
-    secretMessage.querySelector('p').textContent = text;
+    const messageText = secretMessage.querySelector('p');
+    messageText.textContent = text;
     secretMessage.style.display = 'block';
     
     setTimeout(() => {
-        secretMessage.style.display = 'none';
-    }, 3000);
+        secretMessage.style.opacity = '0';
+        setTimeout(() => {
+            secretMessage.style.display = 'none';
+            secretMessage.style.opacity = '1';
+        }, 300);
+    }, 2000);
 }
 
-// إنشاء قلوب متحركة
-function createFloatingHearts() {
-    const heartsContainer = document.querySelectorAll('.floating-hearts');
-    
-    heartsContainer.forEach(container => {
-        for (let i = 0; i < 20; i++) {
-            setTimeout(() => {
-                const heart = document.createElement('div');
-                heart.innerHTML = '❤️';
-                heart.style.position = 'absolute';
-                heart.style.left = `${Math.random() * 100}%`;
-                heart.style.fontSize = `${Math.random() * 20 + 10}px`;
-                heart.style.opacity = '0';
-                heart.style.animation = `float ${Math.random() * 10 + 10}s infinite linear`;
-                heart.style.animationDelay = `${Math.random() * 5}s`;
-                container.appendChild(heart);
-            }, i * 300);
-        }
-    });
-}
-
-// العد التنازلي للعام الجديد
+// العد التنازلي
 function updateCountdown() {
     const now = new Date();
     const newYear = new Date('January 1, 2026 00:00:00');
@@ -228,34 +272,204 @@ function updateCountdown() {
     const totalSeconds = 365 * 24 * 60 * 60;
     const remainingSeconds = days * 24 * 60 * 60 + hours * 60 * 60 + minutes * 60 + seconds;
     const progressPercent = 100 - (remainingSeconds / totalSeconds * 100);
+    const lovePercent = Math.min(100, Math.round(progressPercent + 50));
     
-    progressBar.style.width = `${progressPercent}%`;
-    lovePercent.textContent = `${Math.min(100, Math.round(progressPercent + 50))}%`;
+    document.getElementById('lovePercent').textContent = `${lovePercent}%`;
+    
+    // تأثيرات خاصة عند اقتراب السنة الجديدة
+    if (days < 7) {
+        document.querySelector('.countdown-icon').style.animationDuration = '1s';
+        if (days < 3) {
+            document.querySelector('.countdown').style.animation = 'pulse 1s infinite';
+        }
+    }
 }
 
-// التحكم بالموسيقى
-musicToggle.addEventListener('click', function() {
-    if (backgroundMusic.paused) {
-        backgroundMusic.play();
-        musicToggle.innerHTML = '<i class="fas fa-music"></i>';
-    } else {
-        backgroundMusic.pause();
-        musicToggle.innerHTML = '<i class="fas fa-volume-mute"></i>';
+// تأثيرات اللمس للجوال
+function initTouchEffects() {
+    let isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    
+    if (isTouchDevice) {
+        document.addEventListener('touchstart', function(e) {
+            const touch = e.touches[0];
+            createTouchRipple(touch.clientX, touch.clientY);
+        });
+        
+        // تحسين تجربة اللمس للأزرار
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            button.addEventListener('touchstart', function() {
+                this.style.transform = 'scale(0.95)';
+            });
+            
+            button.addEventListener('touchend', function() {
+                this.style.transform = '';
+            });
+        });
+    }
+}
+
+function createTouchRipple(x, y) {
+    const ripple = document.querySelector('.touch-ripple');
+    if (ripple) {
+        ripple.style.left = `${x}px`;
+        ripple.style.top = `${y}px`;
+        ripple.style.animation = 'ripple 0.6s linear';
+        
+        setTimeout(() => {
+            ripple.style.animation = '';
+        }, 600);
+    }
+}
+
+// مؤشرات التمرير
+function initScrollIndicators() {
+    let scrollTimeout;
+    
+    window.addEventListener('scroll', function() {
+        clearTimeout(scrollTimeout);
+        
+        const scrollY = window.scrollY;
+        const windowHeight = window.innerHeight;
+        const documentHeight = document.documentElement.scrollHeight;
+        
+        const scrollPercentage = (scrollY / (documentHeight - windowHeight)) * 100;
+        const dots = document.querySelectorAll('.scroll-dots .dot');
+        
+        if (dots.length > 0) {
+            if (scrollPercentage < 33) {
+                dots[0].classList.add('active');
+                dots[1].classList.remove('active');
+                dots[2].classList.remove('active');
+            } else if (scrollPercentage < 66) {
+                dots[0].classList.remove('active');
+                dots[1].classList.add('active');
+                dots[2].classList.remove('active');
+            } else {
+                dots[0].classList.remove('active');
+                dots[1].classList.remove('active');
+                dots[2].classList.add('active');
+            }
+        }
+        
+        scrollTimeout = setTimeout(() => {
+            const scrollIndicator = document.querySelector('.swipe-indicator');
+            if (scrollIndicator && scrollY > 100) {
+                scrollIndicator.style.opacity = '0';
+                scrollIndicator.style.transition = 'opacity 0.5s';
+            }
+        }, 100);
+    });
+}
+
+// تحسينات أداء للجوال
+let lastScrollTop = 0;
+let ticking = false;
+
+window.addEventListener('scroll', function() {
+    if (!ticking) {
+        window.requestAnimationFrame(function() {
+            const st = window.pageYOffset || document.documentElement.scrollTop;
+            if (st > lastScrollTop) {
+                // التمرير لأسفل
+                document.body.style.overflowY = 'auto';
+            }
+            lastScrollTop = st <= 0 ? 0 : st;
+            ticking = false;
+        });
+        ticking = true;
     }
 });
 
-// إضافة تأثير هز للعناصر
+// تحسينات للوضع الأفقي
+function handleOrientationChange() {
+    const isLandscape = window.innerWidth > window.innerHeight;
+    
+    if (isLandscape) {
+        document.body.classList.add('landscape');
+        document.querySelector('.container')?.classList.add('landscape-mode');
+    } else {
+        document.body.classList.remove('landscape');
+        document.querySelector('.container')?.classList.remove('landscape-mode');
+    }
+}
+
+window.addEventListener('resize', handleOrientationChange);
+window.addEventListener('orientationchange', handleOrientationChange);
+
+// تهيئة عند البدء
+handleOrientationChange();
+
+// إضافة أنماط CSS ديناميكية للحركات
 const style = document.createElement('style');
 style.textContent = `
     @keyframes shake {
         0%, 100% { transform: translateX(0); }
-        10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
-        20%, 40%, 60%, 80% { transform: translateX(10px); }
+        10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+        20%, 40%, 60%, 80% { transform: translateX(5px); }
+    }
+    
+    @keyframes successPulse {
+        0% { transform: scale(1); box-shadow: 0 8px 25px rgba(255, 64, 129, 0.3); }
+        50% { transform: scale(1.05); box-shadow: 0 12px 30px rgba(255, 64, 129, 0.5); }
+        100% { transform: scale(1); box-shadow: 0 8px 25px rgba(255, 64, 129, 0.3); }
+    }
+    
+    @keyframes ripple {
+        0% {
+            transform: scale(0);
+            opacity: 0.5;
+        }
+        100% {
+            transform: scale(4);
+            opacity: 0;
+        }
+    }
+    
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+    
+    .landscape-mode {
+        max-width: 90% !important;
+        margin-top: 20px !important;
+        margin-bottom: 20px !important;
+    }
+    
+    .memory-text {
+        margin-top: 8px;
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.9);
     }
 `;
 document.head.appendChild(style);
 
-// إضافة رسالة ترحيب عند فتح الموقع
+// منع التمرير الزائد على الجوال
+document.body.addEventListener('touchmove', function(e) {
+    if (e.target.classList.contains('container') || 
+        e.target.closest('.container')) {
+        const container = e.target.closest('.container');
+        const isAtTop = container.scrollTop === 0;
+        const isAtBottom = container.scrollHeight - container.scrollTop === container.clientHeight;
+        
+        if (isAtTop && e.touches[0].clientY > 0) {
+            e.preventDefault();
+        }
+        if (isAtBottom && e.touches[0].clientY < 0) {
+            e.preventDefault();
+        }
+    }
+}, { passive: false });
+
+// تحميل الصفحة مع تأثيرات متدرجة
+window.addEventListener('load', function() {
+    setTimeout(() => {
+        document.body.classList.add('page-loaded');
+    }, 100);
+});
+
+// رسالة ترحيب
 setTimeout(() => {
     showSecretMessage("مرحبًا بك في عالم الحب والرومانسية ❤️");
-}, 1000);
+}, 2000);
