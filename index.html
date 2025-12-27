@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>رسالتي الخاصة لك ❤️</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- اسم المطور -->
+<div class="developer-signature">
+    <p>مطور الموقع: محمود أحمد سعيد</p>
+</div>
+
+<!-- اسم المطور - محمود أحمد سعيد -->
+<div class="developer-signature">
+    <p>مطور الموقع: محمود أحمد سعيد</p>
+</div>
+
+<!-- رسالة دخول سنة 2026 -->
+<div class="new-year-message">
+    <div class="message-content">
+        <h3>🎉 سنة 2026 سعيدة 🎉</h3>
+        <p>كل سنة وأنتم طيبين</p>
+        <p>أتمنى لكم سنة جديدة مليئة بالحب والسعادة</p>
+    </div>
+</div>
+    <!-- الشاشة الرئيسية لكلمة السر -->
+    <div id="passwordScreen" class="screen active">
+        <div class="container">
+            <div class="heart-animation">
+                <i class="fas fa-heart"></i>
+            </div>
+            <h1>مرحبًا بك في عالمنا الخاص ❤️</h1>
+            <p class="subtitle">أدخل كلمة السر التي تعرفها</p>
+            
+            <div class="password-input">
+                <input type="password" id="passwordInput" placeholder="أدخل كلمة السر هنا...">
+                <button id="submitPassword"><i class="fas fa-lock-open"></i> فتح الرسالة</button>
+            </div>
+            
+            <div class="hint">
+                <p><i class="fas fa-lightbulb"></i> تلميح: كلمة السر هي اسم شخص خاص</p>
+            </div>
+            
+            <div class="floating-hearts"></div>
+        </div>
+    </div>
+
+    <!-- شاشة المحتوى بعد إدخال كلمة السر الصحيحة -->
+    <div id="contentScreen" class="screen">
+        <div class="container">
+            <!-- زر العودة -->
+            <button id="backButton" class="back-btn">
+                <i class="fas fa-arrow-right"></i> العودة
+            </button>
+            
+            <!-- المحتوى الديناميكي -->
+            <div id="contentContainer">
+                <!-- سيتم ملؤه بواسطة JavaScript -->
+            </div>
+            
+            <!-- مؤشر التقدم -->
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+                <p class="progress-text">مستوى الحب: <span id="lovePercent">100%</span></p>
+            </div>
+            
+            <!-- العد التنازلي للعام الجديد -->
+            <div class="countdown">
+                <h3><i class="fas fa-clock"></i> العد التنازلي لـ 2026</h3>
+                <div class="countdown-timer">
+                    <div class="time-unit">
+                        <span id="days">0</span>
+                        <p>أيام</p>
+                    </div>
+                    <div class="time-unit">
+                        <span id="hours">0</span>
+                        <p>ساعات</p>
+                    </div>
+                    <div class="time-unit">
+                        <span id="minutes">0</span>
+                        <p>دقائق</p>
+                    </div>
+                    <div class="time-unit">
+                        <span id="seconds">0</span>
+                        <p>ثواني</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- العناصر المتحركة -->
+        <div class="floating-hearts"></div>
+        <div class="sparkles"></div>
+    </div>
+
+    <!-- رسالة خاصة تظهر لفترة وجيزة -->
+    <div id="secretMessage" class="secret-message">
+        <p></p>
+    </div>
+
+    <audio id="backgroundMusic" loop>
+        <source src="https://assets.mixkit.co/music/preview/mixkit-loving-you-117.mp3" type="audio/mpeg">
+    </audio>
+    
+    <script src="script.js"></script>
+</body>
+</html>
