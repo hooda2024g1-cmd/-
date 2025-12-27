@@ -2,318 +2,112 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>رسالتي الخاصة لك ❤️</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>❤️</text></svg>">
-    <meta name="theme-color" content="#ff4081">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="mobile-web-app-capable" content="yes">
 </head>
 <body>
-    <!-- تأثيرات خلفية متقدمة -->
-    <div class="bg-animated-particles"></div>
-    <div class="bg-gradient-mesh"></div>
-    
-    <!-- اسم المطور -->
-    <div class="developer-signature">
-        <p>مطور الموقع: محمود أحمد سعيد</p>
-    </div>
 
+    <!-- اسم المطور -->
+<div class="developer-signature">
+    <p>مطور الموقع: محمود أحمد سعيد</p>
+</div>
+
+<!-- اسم المطور - محمود أحمد سعيد -->
+<div class="developer-signature">
+    <p>مطور الموقع: محمود أحمد سعيد</p>
+</div>
+
+<!-- رسالة دخول سنة 2026 -->
+<div class="new-year-message">
+    <div class="message-content">
+        <h3>🎉 سنة 2026 سعيدة 🎉</h3>
+        <p>كل سنة وأنتم طيبين</p>
+        <p>أتمنى لكم سنة جديدة مليئة بالحب والسعادة</p>
+    </div>
+</div>
     <!-- الشاشة الرئيسية لكلمة السر -->
     <div id="passwordScreen" class="screen active">
         <div class="container">
-            <!-- تأثيرات خاصة حول الحاوية -->
-            <div class="container-glow"></div>
-            <div class="container-sparkles"></div>
-            
-            <!-- القلب المتحرك مع طبقات -->
             <div class="heart-animation">
-                <div class="heart-layer heart-outer"></div>
-                <div class="heart-layer heart-middle"></div>
-                <div class="heart-layer heart-inner">
-                    <i class="fas fa-heart"></i>
-                </div>
-                <div class="heart-particles"></div>
+                <i class="fas fa-heart"></i>
             </div>
-            
-            <!-- العنوان مع تأثير كتابة -->
-            <h1 class="main-title typing-animation">
-                <span class="title-char">مرحبا بكم في عالمنا الخاص</span>
-                
-                <span class="title-heart">❤️</span>
-            </h1>
-            
-            <!-- الشعار المتحرك -->
-            <div class="floating-logo">
-                <div class="logo-ring ring-1"></div>
-                <div class="logo-ring ring-2"></div>
-                <div class="logo-ring ring-3"></div>
-                <div class="logo-text">2026</div>
-            </div>
-            
-            <p class="subtitle wave-text">أدخل كلمة السر التي تعرفها</p>
-            
-            <!-- حقل كلمة السر مع تأثيرات -->
+            <h1>مرحبًا بك في عالمنا الخاص ❤️</h1>
+            <p class="subtitle">أدخل كلمة السر التي تعرفها</p>
+
             <div class="password-input">
-                <div class="input-container">
-                    <div class="input-glow"></div>
-                    <div class="input-ripple"></div>
-                    <i class="fas fa-key input-icon"></i>
-                    <input type="password" id="passwordInput" placeholder="أدخل كلمة السر هنا..." autocomplete="off">
-                    <button class="clear-input" id="clearInput">
-                        <i class="fas fa-times"></i>
-                    </button>
-                    <div class="input-underline">
-                        <div class="underline-wave"></div>
-                    </div>
-                </div>
-                
-                <!-- زر فتح الرسالة مع تأثيرات متقدمة -->
-                <button id="submitPassword" class="submit-btn">
-                    <div class="btn-sparkles"></div>
-                    <div class="btn-glow"></div>
-                    <i class="fas fa-lock-open btn-icon"></i>
-                    <span class="btn-text">فتح الرسالة</span>
-                    <div class="btn-ripple"></div>
-                </button>
-                
-                <!-- تأثيرات عند الضغط -->
-                <div class="press-effect"></div>
+                <input type="password" id="passwordInput" placeholder="أدخل كلمة السر هنا...">
+                <button id="submitPassword"><i class="fas fa-lock-open"></i> فتح الرسالة</button>
             </div>
-            
-            <!-- التلميح مع تأثيرات -->
+
             <div class="hint">
-                <div class="hint-container">
-                    <div class="hint-sparkle"></div>
-                    <i class="fas fa-lightbulb hint-icon"></i>
-                    <p class="hint-text">تلميح: كلمة السر هي اسم شخص خاص</p>
-                </div>
+                <p><i class="fas fa-lightbulb"></i> تلميح: كلمة السر هي اسم شخص خاص</p>
             </div>
-            
-            <!-- مؤشر للجوال -->
-            <div class="mobile-indicator">
-                <div class="indicator-dots">
-                    <div class="dot"></div>
-                    <div class="dot"></div>
-                    <div class="dot"></div>
-                </div>
-                <p class="indicator-text">اسحب لأعلى للمزيد</p>
-            </div>
-        </div>
-        
-        <!-- تأثيرات الخلفية للجوال -->
-        <div class="mobile-bg-effects">
-            <div class="bg-flare flare-1"></div>
-            <div class="bg-flare flare-2"></div>
-            <div class="bg-flare flare-3"></div>
-            <div class="bg-orb orb-1"></div>
-            <div class="bg-orb orb-2"></div>
-            <div class="bg-orb orb-3"></div>
-        </div>
-        
-        <!-- عناصر طافية -->
-        <div class="floating-elements">
-            <div class="float-element element-1">✨</div>
-            <div class="float-element element-2">❤️</div>
-            <div class="float-element element-3">🌟</div>
-            <div class="float-element element-4">🎉</div>
-            <div class="float-element element-5">💫</div>
+
+            <div class="floating-hearts"></div>
         </div>
     </div>
 
-    <!-- شاشة المحتوى -->
+    <!-- شاشة المحتوى بعد إدخال كلمة السر الصحيحة -->
     <div id="contentScreen" class="screen">
-        <div class="container content-container">
-            <!-- تأثيرات دخول -->
-            <div class="entry-effects">
-                <div class="entry-spark left-spark"></div>
-                <div class="entry-spark right-spark"></div>
-                <div class="entry-spark top-spark"></div>
-                <div class="entry-spark bottom-spark"></div>
-            </div>
-            
-            <!-- زر العودة مع تأثيرات -->
+        <div class="container">
+            <!-- زر العودة -->
             <button id="backButton" class="back-btn">
-                <div class="back-btn-glow"></div>
-                <i class="fas fa-arrow-right"></i>
-                <span class="back-text">العودة</span>
-                <div class="back-btn-ripple"></div>
+                <i class="fas fa-arrow-right"></i> العودة
             </button>
-            
-            <!-- المحتوى الرئيسي -->
-            <div id="contentContainer" class="content-wrapper"></div>
-            
-            <!-- شريط التقدم المتحرك -->
-            <div class="progress-container">
-                <div class="progress-wrapper">
-                    <div class="progress-header">
-                        <i class="fas fa-heart progress-icon"></i>
-                        <span class="progress-title">مستوى الحب</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-track">
-                            <div class="progress-fill" id="progressBar">
-                                <div class="progress-sparkle"></div>
-                                <div class="progress-wave"></div>
-                            </div>
-                            <div class="progress-marker marker-25"></div>
-                            <div class="progress-marker marker-50"></div>
-                            <div class="progress-marker marker-75"></div>
-                            <div class="progress-marker marker-100"></div>
-                        </div>
-                        <div class="progress-text">
-                            <span class="progress-label">نسبة الحب:</span>
-                            <span id="lovePercent" class="love-percent">100%</span>
-                        </div>
-                    </div>
-                </div>
+
+            <!-- المحتوى الديناميكي -->
+            <div id="contentContainer">
+                <!-- سيتم ملؤه بواسطة JavaScript -->
             </div>
-            
-            <!-- العد التنازلي المتحرك -->
+
+            <!-- مؤشر التقدم -->
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+                <p class="progress-text">مستوى الحب: <span id="lovePercent">100%</span></p>
+            </div>
+
+            <!-- العد التنازلي للعام الجديد -->
             <div class="countdown">
-                <div class="countdown-header">
-                    <div class="countdown-icon-container">
-                        <i class="fas fa-clock countdown-icon"></i>
-                        <div class="icon-rings"></div>
-                    </div>
-                    <h3 class="countdown-title">العد التنازلي لـ 2026</h3>
-                </div>
+                <h3><i class="fas fa-clock"></i> العد التنازلي لـ 2026</h3>
                 <div class="countdown-timer">
                     <div class="time-unit">
-                        <div class="time-card">
-                            <div class="time-number" id="days">0</div>
-                            <div class="time-flip"></div>
-                        </div>
-                        <div class="time-label">أيام</div>
+                        <span id="days">0</span>
+                        <p>أيام</p>
                     </div>
-                    <div class="time-separator">:</div>
                     <div class="time-unit">
-                        <div class="time-card">
-                            <div class="time-number" id="hours">0</div>
-                            <div class="time-flip"></div>
-                        </div>
-                        <div class="time-label">ساعات</div>
+                        <span id="hours">0</span>
+                        <p>ساعات</p>
                     </div>
-                    <div class="time-separator">:</div>
                     <div class="time-unit">
-                        <div class="time-card">
-                            <div class="time-number" id="minutes">0</div>
-                            <div class="time-flip"></div>
-                        </div>
-                        <div class="time-label">دقائق</div>
+                        <span id="minutes">0</span>
+                        <p>دقائق</p>
                     </div>
-                    <div class="time-separator">:</div>
                     <div class="time-unit">
-                        <div class="time-card">
-                            <div class="time-number" id="seconds">0</div>
-                            <div class="time-flip"></div>
-                        </div>
-                        <div class="time-label">ثواني</div>
+                        <span id="seconds">0</span>
+                        <p>ثواني</p>
                     </div>
-                </div>
-                <div class="countdown-footer">
-                    <div class="countdown-progress">
-                        <div class="cd-progress-bar"></div>
-                        <div class="cd-progress-text">تقدم نحو 2026</div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- مؤشرات التمرير للجوال -->
-            <div class="scroll-indicator">
-                <div class="scroll-bar">
-                    <div class="scroll-thumb"></div>
-                </div>
-                <div class="scroll-hint">
-                    <i class="fas fa-chevron-up"></i>
-                    <span>مرر لأسفل</span>
                 </div>
             </div>
         </div>
-        
-        <!-- تأثيرات الجوال المتقدمة -->
-        <div class="mobile-effects-advanced">
-            <div class="effect-touch-ripple"></div>
-            <div class="effect-particle-field"></div>
-        </div>
-        
-        <!-- شارات تفاعلية -->
-        <div class="interactive-badges">
-            <div class="badge love-badge">
-                <i class="fas fa-heart"></i>
-                <span>حب</span>
-            </div>
-            <div class="badge year-badge">
-                <span>2026</span>
-            </div>
-            <div class="badge secret-badge">
-                <i class="fas fa-star"></i>
-                <span>خاص</span>
-            </div>
-        </div>
+
+        <!-- العناصر المتحركة -->
+        <div class="floating-hearts"></div>
+        <div class="sparkles"></div>
     </div>
 
-    <!-- رسالة سرية -->
+    <!-- رسالة خاصة تظهر لفترة وجيزة -->
     <div id="secretMessage" class="secret-message">
-        <div class="secret-container">
-            <div class="secret-sparkles"></div>
-            <div class="secret-content">
-                <i class="fas fa-sparkles secret-icon-left"></i>
-                <div class="secret-text-container">
-                    <p class="secret-text"></p>
-                    <div class="secret-underline"></div>
-                </div>
-                <i class="fas fa-sparkles secret-icon-right"></i>
-            </div>
-            <div class="secret-confetti"></div>
-        </div>
+        <p></p>
     </div>
 
-    <!-- شاشة التحميل -->
-    <div id="pageLoader" class="page-loader">
-        <div class="loader-container">
-            <div class="loader-animation">
-                <div class="loader-ring"></div>
-                <div class="loader-heart">
-                    <i class="fas fa-heart"></i>
-                </div>
-                <div class="loader-particles"></div>
-            </div>
-            <div class="loader-text typing-loader">
-                 <span class="title-char">جار التحميل</span>
-                <span class="loader-char">.</span>
-                <span class="loader-char">.</span>
-                <span class="loader-char">.</span>
-            </div>
-            <div class="loader-progress">
-                <div class="loader-bar">
-                    <div class="loader-fill"></div>
-                </div>
-                <div class="loader-percent">0%</div>
-            </div>
-        </div>
-    </div>
-
-    <!-- الموسيقى -->
-    <audio id="backgroundMusic" loop preload="auto">
+    <audio id="backgroundMusic" loop>
         <source src="https://assets.mixkit.co/music/preview/mixkit-loving-you-117.mp3" type="audio/mpeg">
-    </audio>
-
-    <!-- تأثيرات صوتية -->
-    <audio id="clickSound" preload="auto">
-        <source src="https://assets.mixkit.co/sfx/preview/mixkit-select-click-1109.mp3" type="audio/mpeg">
-    </audio>
-    
-    <audio id="successSound" preload="auto">
-        <source src="https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3" type="audio/mpeg">
     </audio>
 
     <script src="script.js"></script>
 </body>
-</html>
